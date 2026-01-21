@@ -22,7 +22,12 @@
 
     <style>
         /* Base Fonts */
-        body { font-family: 'Inter', sans-serif; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="black" stroke="white" stroke-width="2"><path d="M5.5 3.21l10.8 15.65-4.56-.63 3.6 7.77-3.52 1.6-3.7-8-4.14 3.6V3.21z"/></svg>'), auto;
+        }
+        
+        /* Platform Fonts */
         .font-insta { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         .font-fb { font-family: Helvetica, Arial, sans-serif; }
         .font-x { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -136,6 +141,22 @@
         .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 50%; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
         .dot.active { background: #ffffff; transform: scale(1.2); opacity: 1; }
         .dot-insta.active { background: #3b82f6; }
+
+        /* Image Organization Tools */
+        .thumb-controls {
+            opacity: 0; transition: opacity 0.2s;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center; gap: 4px;
+        }
+        .thumb-item:hover .thumb-controls { opacity: 1; }
+        .control-btn {
+            width: 20px; height: 20px; border-radius: 50%; background: white; color: black;
+            font-size: 10px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        .control-btn:hover { background: #3b82f6; color: white; }
+        .delete-btn:hover { background: #ef4444; color: white; }
     </style>
 </head>
 <body class="bg-animated text-slate-800 min-h-screen flex flex-col">
@@ -194,8 +215,8 @@
                         </label>
                     </div>
                     
-                    <!-- Image Thumbnails Preview -->
-                    <div id="image-thumbnails" class="flex gap-2 overflow-x-auto pb-2 h-16 empty:hidden">
+                    <!-- Image Thumbnails with Organization Tools -->
+                    <div id="image-thumbnails" class="flex flex-wrap gap-3 pt-2 empty:hidden min-h-[60px]">
                         <!-- Thumbnails injected by JS -->
                     </div>
                 </div>
@@ -244,10 +265,9 @@
                         </div>
                         <i class="fas fa-ellipsis-h text-gray-600 text-sm"></i>
                     </div>
-                    <!-- Image Area (Carousel) -->
-                    <div class="w-full bg-gray-100 min-h-[375px] relative media-area-instagram">
+                    <!-- Image Area (Square for Insta) -->
+                    <div class="w-full bg-gray-100 relative media-area-instagram aspect-square">
                          <!-- Injected by JS -->
-                         <img src="https://via.placeholder.com/600x600" class="w-full h-auto object-cover opacity-50">
                     </div>
                     <!-- Actions -->
                     <div class="p-3">
@@ -287,9 +307,9 @@
                      <div class="px-4 pb-2">
                          <p class="text-sm text-gray-900 whitespace-pre-line text-target">Ceci est une description de test pour LinkedIn.</p>
                      </div>
-                     <!-- Image Area -->
-                     <div class="w-full bg-gray-100 media-area-linkedin aspect-video">
-                         <img src="https://via.placeholder.com/800x600" class="w-full h-full object-cover opacity-50">
+                     <!-- Image Area (4:5 Ratio for Professional Posts) -->
+                     <div class="w-full bg-gray-100 media-area-linkedin aspect-[4/5]">
+                         <!-- Injected by JS -->
                      </div>
                      <!-- Stats Line -->
                      <div class="px-4 py-2 border-b border-gray-100 flex justify-between items-center">
@@ -342,9 +362,9 @@
                     <div class="px-3 pb-3">
                         <p class="text-[15px] text-[#050505] whitespace-pre-line text-target">Voici un post style Facebook.</p>
                     </div>
-                    <!-- Image -->
-                    <div class="w-full media-area-facebook aspect-[4/3]">
-                         <img src="https://via.placeholder.com/800x600" class="w-full h-full object-cover opacity-50">
+                    <!-- Image (4:5 Ratio) -->
+                    <div class="w-full media-area-facebook aspect-[4/5]">
+                         <!-- Injected by JS -->
                     </div>
                     <!-- Stats -->
                     <div class="px-4 py-2.5 flex justify-between items-center text-[#65676B] text-[15px]">
@@ -389,9 +409,9 @@
                             <div class="mt-1 text-[15px] text-gray-900 whitespace-pre-line text-target mb-3">
                                 C'est ce qu'il se passe aujourd'hui sur X.
                             </div>
-                            <!-- Image -->
+                            <!-- Image (16:9 Ratio for X) -->
                             <div class="rounded-2xl border border-gray-200 overflow-hidden mb-3 aspect-video media-area-x">
-                                <img src="https://via.placeholder.com/800x500" class="w-full h-full object-cover opacity-50">
+                                <!-- Injected by JS -->
                             </div>
                             <!-- Metrics -->
                             <div class="flex justify-between text-gray-500 text-[13px] max-w-md">
@@ -421,9 +441,9 @@
 
                 <!-- TIKTOK PREVIEW -->
                 <div id="preview-tiktok" class="bg-black w-[350px] h-[650px] rounded-2xl border-4 border-gray-900 preview-shadow font-tiktok hidden relative overflow-hidden">
-                    <!-- Media BG -->
+                    <!-- Media BG (9:16 Full Screen) -->
                     <div class="absolute inset-0 media-area-tiktok">
-                        <img src="https://via.placeholder.com/400x800" class="w-full h-full object-cover opacity-60">
+                        <!-- Injected by JS -->
                     </div>
                     
                     <!-- Top Overlay -->
@@ -498,13 +518,13 @@
                 </div>
                 
                 <div class="flex gap-6">
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/10 group">
+                    <a href="https://www.printeknologies.com" target="_blank" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/10 group">
                         <i class="fab fa-linkedin-in group-hover:scale-110 transition"></i>
                     </a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/10 group">
+                    <a href="https://www.printeknologies.com" target="_blank" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/10 group">
                         <i class="fab fa-instagram group-hover:scale-110 transition"></i>
                     </a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/10 group">
+                    <a href="https://www.printeknologies.com" target="_blank" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center transition backdrop-blur-sm border border-white/10 group">
                         <i class="fas fa-globe group-hover:scale-110 transition"></i>
                     </a>
                 </div>
@@ -512,7 +532,7 @@
             
             <div class="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-sm text-slate-400">
                 <p>&copy; 2024 Printeknologies. Tous droits réservés.</p>
-                <p class="flex items-center gap-2"><i class="fas fa-code"></i> Développé avec excellence.</p>
+                <p class="flex items-center gap-2"><i class="fas fa-link"></i> <a href="https://www.printeknologies.com" target="_blank" class="hover:text-white transition">www.printeknologies.com</a></p>
             </div>
         </div>
     </footer>
@@ -548,6 +568,7 @@
             inputs.handle.value = defaultData.handle;
             inputs.text.value = defaultData.text;
             updateContent();
+            renderThumbnails(); // Show initial thumb
             renderAllCarousels();
         };
 
@@ -619,25 +640,92 @@
                 });
 
                 Promise.all(promises).then(images => {
-                    postImages = images;
-                    // Reset indices for all platforms
-                    Object.keys(currentImageIndices).forEach(k => currentImageIndices[k] = 0);
+                    // For "adding", we concat. If user wants replace, they can delete old ones first.
+                    // But for simplicity in this flow, let's Append.
+                    // Check if it's the placeholder, if so, clear it first
+                    if (postImages.length === 1 && postImages[0].includes("placeholder")) {
+                        postImages = images;
+                    } else {
+                        postImages = [...postImages, ...images];
+                    }
                     
-                    // Render Thumbnails
-                    const thumbContainer = document.getElementById('image-thumbnails');
-                    thumbContainer.innerHTML = '';
-                    images.forEach(imgSrc => {
-                        const img = document.createElement('img');
-                        img.src = imgSrc;
-                        img.className = "h-12 w-12 rounded object-cover border border-slate-200 cursor-pointer hover:opacity-80 transition";
-                        // Optional: Add click to preview specific image (future enhancement)
-                        thumbContainer.appendChild(img);
-                    });
-
-                    renderAllCarousels();
+                    updateAllImages();
                 });
             }
         }
+
+        // Global Update Function
+        function updateAllImages() {
+             // Reset indices for all platforms
+            Object.keys(currentImageIndices).forEach(k => currentImageIndices[k] = 0);
+            renderThumbnails();
+            renderAllCarousels();
+        }
+
+        // Render Thumbnails with Organization Tools
+        function renderThumbnails() {
+            const thumbContainer = document.getElementById('image-thumbnails');
+            thumbContainer.innerHTML = '';
+            
+            postImages.forEach((imgSrc, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = "relative w-16 h-16 rounded overflow-hidden border border-slate-200 thumb-item group";
+                
+                // Image
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.className = "w-full h-full object-cover";
+                
+                // Controls Overlay
+                const controls = document.createElement('div');
+                controls.className = "thumb-controls";
+                
+                // Left Btn
+                if(index > 0) {
+                    const leftBtn = document.createElement('div');
+                    leftBtn.className = "control-btn";
+                    leftBtn.innerHTML = "<i class='fas fa-chevron-left'></i>";
+                    leftBtn.onclick = () => moveImage(index, -1);
+                    controls.appendChild(leftBtn);
+                }
+                
+                // Delete Btn
+                const delBtn = document.createElement('div');
+                delBtn.className = "control-btn delete-btn";
+                delBtn.innerHTML = "<i class='fas fa-times'></i>";
+                delBtn.onclick = () => removeImage(index);
+                controls.appendChild(delBtn);
+
+                // Right Btn
+                if(index < postImages.length - 1) {
+                    const rightBtn = document.createElement('div');
+                    rightBtn.className = "control-btn";
+                    rightBtn.innerHTML = "<i class='fas fa-chevron-right'></i>";
+                    rightBtn.onclick = () => moveImage(index, 1);
+                    controls.appendChild(rightBtn);
+                }
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(controls);
+                thumbContainer.appendChild(wrapper);
+            });
+        }
+
+        // Organization Logic
+        window.moveImage = function(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex >= 0 && newIndex < postImages.length) {
+                // Swap
+                [postImages[index], postImages[newIndex]] = [postImages[newIndex], postImages[index]];
+                updateAllImages();
+            }
+        };
+
+        window.removeImage = function(index) {
+            postImages.splice(index, 1);
+            if(postImages.length === 0) postImages = ["https://via.placeholder.com/800x800"];
+            updateAllImages();
+        };
 
         // Render Carousels for all platforms
         function renderAllCarousels() {
@@ -702,13 +790,6 @@
             track.style.transform = `translateX(${translateVal}%)`;
 
             // Update Dots
-            const dotActiveColor = platform === 'instagram' ? '#3b82f6' : '#ffffff';
-            const dotInactiveColor = 'rgba(255,255,255,0.4)';
-            
-            // We use simple class toggling, relying on CSS for color
-            // But CSS specific classes need to be managed carefully
-            // The simplest is to just toggle 'active' class
-            
             const container = document.querySelector(`.media-area-${platform}`);
             const dots = container.querySelectorAll('.dot');
             dots.forEach((dot, idx) => {
