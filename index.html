@@ -97,29 +97,45 @@
         
         .tiktok-overlay { background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 40%); }
 
-        /* Carousel Styles */
+        /* Carousel Styles Correction */
         .carousel-container { position: relative; overflow: hidden; width: 100%; height: 100%; }
+        
+        /* Flex track with transition */
         .carousel-track { display: flex; transition: transform 0.3s ease-in-out; height: 100%; }
-        .carousel-slide { min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f3f4f6; position: relative; }
+        
+        /* Slide styling - width is handled by JS inline styles for precision */
+        .carousel-slide { 
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #f3f4f6; 
+            position: relative; 
+            overflow: hidden;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        
         .carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
         
         .carousel-nav-btn {
             position: absolute; top: 50%; transform: translateY(-50%);
-            background: rgba(0,0,0,0.5); color: white; border-radius: 50%;
-            width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-            font-size: 12px; cursor: pointer; z-index: 20; opacity: 0; transition: opacity 0.2s;
+            background: rgba(0,0,0,0.6); color: white; border-radius: 50%;
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; cursor: pointer; z-index: 20; opacity: 0; transition: all 0.2s;
+            backdrop-filter: blur(2px);
         }
         .carousel-container:hover .carousel-nav-btn { opacity: 1; }
         .nav-prev { left: 10px; }
         .nav-next { right: 10px; }
         
         .carousel-dots {
-            position: absolute; bottom: 10px; left: 0; right: 0;
-            display: flex; justify-content: center; gap: 4px; z-index: 20;
+            position: absolute; bottom: 12px; left: 0; right: 0;
+            display: flex; justify-content: center; gap: 5px; z-index: 20;
+            pointer-events: none;
         }
-        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 50%; }
-        .dot.active { background: #3b82f6; transform: scale(1.2); }
-        .dot-insta.active { background: #0095f6; }
+        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 50%; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .dot.active { background: #ffffff; transform: scale(1.2); opacity: 1; }
+        .dot-insta.active { background: #3b82f6; }
     </style>
 </head>
 <body class="bg-animated text-slate-800 min-h-screen flex flex-col">
@@ -604,7 +620,7 @@
 
                 Promise.all(promises).then(images => {
                     postImages = images;
-                    // Reset indices
+                    // Reset indices for all platforms
                     Object.keys(currentImageIndices).forEach(k => currentImageIndices[k] = 0);
                     
                     // Render Thumbnails
@@ -613,7 +629,8 @@
                     images.forEach(imgSrc => {
                         const img = document.createElement('img');
                         img.src = imgSrc;
-                        img.className = "h-12 w-12 rounded object-cover border border-slate-200";
+                        img.className = "h-12 w-12 rounded object-cover border border-slate-200 cursor-pointer hover:opacity-80 transition";
+                        // Optional: Add click to preview specific image (future enhancement)
                         thumbContainer.appendChild(img);
                     });
 
@@ -628,14 +645,17 @@
                 const container = document.querySelector(`.media-area-${platform}`);
                 if(!container) return;
 
+                const count = postImages.length;
+                const widthPerSlide = 100 / count; // Calculate explicit width percentage per slide
+                
                 // Build Carousel HTML
                 const slidesHtml = postImages.map((src, index) => `
-                    <div class="carousel-slide">
+                    <div class="carousel-slide" style="width: ${widthPerSlide}%">
                         <img src="${src}" class="w-full h-full object-cover">
                     </div>
                 `).join('');
 
-                const hasMultiple = postImages.length > 1;
+                const hasMultiple = count > 1;
                 const dotsHtml = hasMultiple ? `
                     <div class="carousel-dots">
                         ${postImages.map((_, i) => `<div class="dot ${platform === 'instagram' ? 'dot-insta' : ''} ${i === 0 ? 'active' : ''}" id="dot-${platform}-${i}"></div>`).join('')}
@@ -647,9 +667,10 @@
                     <div class="carousel-nav-btn nav-next" onclick="moveCarousel('${platform}', 1)"><i class="fas fa-chevron-right"></i></div>
                 ` : '';
 
+                // We set the Track width to accomodate all slides side-by-side
                 container.innerHTML = `
                     <div class="carousel-container">
-                        <div class="carousel-track" id="track-${platform}" style="width: ${postImages.length * 100}%">
+                        <div class="carousel-track" id="track-${platform}" style="width: ${count * 100}%">
                             ${slidesHtml}
                         </div>
                         ${dotsHtml}
@@ -669,23 +690,28 @@
             
             current += direction;
             
-            // Loop or Clamp? Social networks usually clamp (stop at end), but for ease let's clamp.
+            // Clamp to bounds
             if (current < 0) current = 0;
             if (current >= total) current = total - 1;
             
             currentImageIndices[platform] = current;
             
             // Move Track
-            const percentage = -(current * (100 / total)); // Since width is total*100%, each slide is 100/total% wide relative to track
-            // Actually, simpler transform logic:
-            // Track width is e.g. 300% (for 3 images). 
-            // TranslateX should be 0%, -33.33%, -66.66%
-            
+            // Width of one slide relative to the track is (100 / total)%
             const translateVal = -(current * (100 / total));
             track.style.transform = `translateX(${translateVal}%)`;
 
             // Update Dots
-            document.querySelectorAll(`.media-area-${platform} .dot`).forEach((dot, idx) => {
+            const dotActiveColor = platform === 'instagram' ? '#3b82f6' : '#ffffff';
+            const dotInactiveColor = 'rgba(255,255,255,0.4)';
+            
+            // We use simple class toggling, relying on CSS for color
+            // But CSS specific classes need to be managed carefully
+            // The simplest is to just toggle 'active' class
+            
+            const container = document.querySelector(`.media-area-${platform}`);
+            const dots = container.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
                 if(idx === current) dot.classList.add('active');
                 else dot.classList.remove('active');
             });
